@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para María Laura 💕</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a0a1e 0%, #2d1b36 30%, #1a0a1e 60%, #0d0510 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Lora', serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ===== ESTRELLAS DE FONDO ===== */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        /* ===== CORAZONES FLOTANTES ===== */
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .floating-heart {
+            position: absolute;
+            bottom: -50px;
+            font-size: 20px;
+            animation: floatUp var(--float-duration) ease-in infinite;
+            animation-delay: var(--float-delay);
+            opacity: 0;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(0) rotate(0deg) scale(0.5);
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) rotate(360deg) scale(1.2);
+            }
+        }
+
+        /* ===== CONTENEDOR PRINCIPAL ===== */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            padding: 20px;
+            width: 100%;
+            max-width: 750px;
+        }
+
+        /* ===== SOBRE (ENVELOPE) ===== */
+        .envelope-wrapper {
+            perspective: 1000px;
+            cursor: pointer;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .envelope {
+            width: 320px;
+            height: 200px;
+            position: relative;
+            transition: transform 0.6s ease;
+        }
+
+        .envelope:hover {
+            transform: scale(1.05);
+        }
+
+        .envelope-body {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #c9a87c, #b8956a, #a67c52);
+            border-radius: 5px;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4), inset 0 0 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .envelope-body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(135deg, transparent 48%, rgba(139,90,43,0.3) 50%, transparent 52%),
+                linear-gradient(225deg, transparent 48%, rgba(139,90,43,0.3) 50%, transparent 52%);
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(180deg, #b8956a, #a67c52);
+            clip-path: polygon(0 0, 50% 100%, 100% 0);
+            transform-origin: top center;
+            transition: transform 0.8s ease;
+            z-index: 3;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .envelope.opened .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .envelope-seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #e74c6f, #c0392b);
+            border-radius: 50%;
+            z-index: 4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.3);
+            transition: opacity 0.4s ease;
+        }
+
+        .envelope.opened .envelope-seal {
+            opacity: 0;
+        }
+
+        .envelope-seal span {
+            font-size: 24px;
+        }
+
+        .envelope-letter-preview {
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 80%;
+            height: 60%;
+            background: #fdf6e3;
+            border-radius: 3px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Dancing Script', cursive;
+            color: #c0392b;
+            font-size: 16px;
+            transition: transform 0.8s ease 0.3s;
+        }
+
+        .envelope.opened .envelope-letter-preview {
+            transform: translateY(-80px);
+        }
+
+        .open-hint {
+            text-align: center;
+            color: #d4a574;
+            font-family: 'Dancing Script', cursive;
+            font-size: 18px;
+            margin-top: 15px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* ===== CARTA ===== */
+        .letter-container {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            pointer-events: none;
+        }
+
+        .letter-container.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .letter {
+            background: linear-gradient(180deg, #fdf8ef, #f9f0d8, #fdf8ef);
+            border-radius: 8px;
+            padding: 50px 45px;
+            position: relative;
+            box-shadow: 
+                0 5px 30px rgba(0,0,0,0.3),
+                0 0 0 1px rgba(139,90,43,0.2),
+                inset 0 0 60px rgba(139,90,43,0.05);
+            overflow: hidden;
+        }
+
+        .letter::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border: 2px solid rgba(184, 149, 106, 0.3);
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .letter::after {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            right: 18px;
+            bottom: 18px;
+            border: 1px solid rgba(184, 149, 106, 0.15);
+            border-radius: 3px;
+            pointer-events: none;
+        }
+
+        .corner-decoration {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            opacity: 0.3;
+        }
+
+        .corner-decoration.top-left {
+            top: 20px;
+            left: 20px;
+            border-top: 3px solid #b8956a;
+            border-left: 3px solid #b8956a;
+        }
+
+        .corner-decoration.top-right {
+            top: 20px;
+            right: 20px;
+            border-top: 3px solid #b8956a;
+            border-right: 3px solid #b8956a;
+        }
+
+        .corner-decoration.bottom-left {
+            bottom: 20px;
+            left: 20px;
+            border-bottom: 3px solid #b8956a;
+            border-left: 3px solid #b8956a;
+        }
+
+        .corner-decoration.bottom-right {
+            bottom: 20px;
+            right: 20px;
+            border-bottom: 3px solid #b8956a;
+            border-right: 3px solid #b8956a;
+        }
+
+        .letter-date {
+            text-align: right;
+            font-family: 'Lora', serif;
+            font-style: italic;
+            color: #8b6f47;
+            font-size: 14px;
+            margin-bottom: 25px;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.8s ease;
+        }
+
+        .letter-date.anim {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .letter-greeting {
+            font-family: 'Dancing Script', cursive;
+            font-size: 36px;
+            color: #c0392b;
+            margin-bottom: 25px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease 0.3s;
+        }
+
+        .letter-greeting.anim {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .letter-greeting .heart {
+            display: inline-block;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.3); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.2); }
+            60% { transform: scale(1); }
+        }
+
+        .letter-lines {
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .letter-line {
+            background: repeating-linear-gradient(
+                transparent,
+                transparent 31px,
+                rgba(184, 149, 106, 0.15) 31px,
+                rgba(184, 149, 106, 0.15) 32px
+            );
+            padding: 0;
+            min-height: 32px;
+        }
+
+        .letter-body p {
+            font-family: 'Lora', serif;
+            font-size: 16px;
+            line-height: 32px;
+            color: #4a3728;
+            margin-bottom: 16px;
+            text-align: justify;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.8s ease;
+        }
+
+        .letter-body p.anim {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .letter-body p .highlight {
+            color: #c0392b;
+            font-weight: 700;
+        }
+
+        .letter-body p .name-highlight {
+            font-family: 'Dancing Script', cursive;
+            color: #c0392b;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .letter-divider {
+            text-align: center;
+            margin: 25px 0;
+            opacity: 0;
+            transition: all 0.8s ease;
+        }
+
+        .letter-divider.anim {
+            opacity: 1;
+        }
+
+        .letter-divider span {
+            color: #c0392b;
+            font-size: 18px;
+            letter-spacing: 8px;
+        }
+
+        .letter-closing {
+            text-align: right;
+            margin-top: 30px;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.8s ease;
+        }
+
+        .letter-closing.anim {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .letter-closing p {
+            font-family: 'Lora', serif;
+            font-style: italic;
+            color: #4a3728;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .letter-signature {
+            font-family: 'Dancing Script', cursive;
+            font-size: 32px;
+            color: #c0392b;
+            margin-top: 10px;
+        }
+
+        .letter-ps {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(184, 149, 106, 0.3);
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.8s ease;
+        }
+
+        .letter-ps.anim {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .letter-ps p {
+            font-family: 'Lora', serif;
+            font-size: 14px;
+            color: #8b6f47;
+            font-style: italic;
+            line-height: 1.8;
+        }
+
+        /* ===== CONTADOR DE MESES ===== */
+        .anniversary-badge {
+            text-align: center;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 1s ease;
+        }
+
+        .anniversary-badge.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .anniversary-badge.reset {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .badge-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e74c6f, #c0392b);
+            margin: 0 auto 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 25px rgba(192, 57, 43, 0.4);
+            animation: gentleFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes gentleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .badge-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+        }
+
+        .badge-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 16px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .badge-label {
+            font-family: 'Dancing Script', cursive;
+            font-size: 20px;
+            color: #d4a574;
+        }
+
+        /* ===== GALERÍA DE MOMENTOS ===== */
+        .moments-section {
+            margin-top: 40px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+            pointer-events: none;
+        }
+
+        .moments-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .moments-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 24px;
+            color: #d4a574;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .moments-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .moment-card {
+            background: rgba(253, 248, 239, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 12px;
+            padding: 20px 15px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .moment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .moment-emoji {
+            font-size: 36px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .moment-text {
+            font-family: 'Lora', serif;
+            font-size: 13px;
+            color: #d4a574;
+            line-height: 1.5;
+        }
+
+        /* ===== FOOTER ===== */
+        .letter-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(184, 149, 106, 0.2);
+        }
+
+        .footer-hearts {
+            font-size: 24px;
+            letter-spacing: 10px;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        /* ===== CONFETTI ===== */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            top: -10px;
+            width: 10px;
+            height: 10px;
+            animation: confettiFall var(--fall-duration) linear forwards;
+            opacity: 0;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .letter {
+                padding: 35px 25px;
+            }
+
+            .letter-greeting {
+                font-size: 28px;
+            }
+
+            .letter-body p {
+                font-size: 14px;
+            }
+
+            .envelope {
+                width: 260px;
+                height: 165px;
+            }
+
+            .moments-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .corner-decoration {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars" id="stars"></div>
+    <div class="floating-hearts" id="floatingHearts"></div>
+    <div class="confetti-container" id="confettiContainer"></div>
+
+    <div class="main-container">
+
+        <div class="anniversary-badge" id="anniversaryBadge">
+            <div class="badge-circle">
+                <span class="badge-number">6</span>
+                <span class="badge-text">meses</span>
+            </div>
+            <div class="badge-label">Juntos y enamorados</div>
+        </div>
+
+        <div class="envelope-wrapper">
+            <div class="envelope" id="envelope" onclick="toggleEnvelope()">
+                <div class="envelope-body"></div>
+                <div class="envelope-flap"></div>
+                <div class="envelope-seal">
+                    <span>💌</span>
+                </div>
+                <div class="envelope-letter-preview">
+                    Para María Laura 💕
+                </div>
+            </div>
+        </div>
+        <p class="open-hint" id="openHint">✨ Toca el sobre para abrirlo ✨</p>
+
+        <div class="letter-container" id="letterContainer">
+            <div class="letter">
+                <div class="corner-decoration top-left"></div>
+                <div class="corner-decoration top-right"></div>
+                <div class="corner-decoration bottom-left"></div>
+                <div class="corner-decoration bottom-right"></div>
+
+                <div class="letter-date" id="letterDate"></div>
+
+                <h1 class="letter-greeting" id="letterGreeting">
+                    Mi hermosa <span class="name-highlight">María Laura</span> <span class="heart">💕</span>
+                </h1>
+
+                <div class="letter-lines">
+                    <div class="letter-body">
+                        <p id="p1">
+                            Hoy cumplimos <span class="highlight">6 meses</span> juntos, y quiero que sepas que 
+                            cada uno de estos días a tu lado ha sido el mejor regalo que la vida me ha dado. 
+                            Desde que llegaste, todo cambió: mis días tienen más color, mis noches más calma 
+                            y mi corazón más razones para latir.
+                        </p>
+
+                        <p id="p2">
+                            <span class="name-highlight">María Laura</span>, eres esa persona que sin saberlo 
+                            se convirtió en mi persona favorita. Tu sonrisa ilumina hasta mis días más grises, 
+                            tu voz es la melodía que más quiero escuchar, y tu abrazo es el lugar donde 
+                            todo tiene sentido.
+                        </p>
+
+                        <p id="p3">
+                            En estos 6 meses hemos construido recuerdos que atesoro con todo mi ser: nuestras 
+                            risas, nuestras conversaciones, esas miradas que dicen todo sin palabras, y cada 
+                            momento en que el tiempo se detiene simplemente porque estamos juntos.
+                        </p>
+
+                        <div class="letter-divider" id="divider1">
+                            <span>♥ ♥ ♥</span>
+                        </div>
+
+                        <p id="p4">
+                            Gracias por ser tú, por tu paciencia, por tu ternura, por cada detalle que me 
+                            regalas sin esperarlo. Gracias por elegirme cada día, así como yo te elijo a ti 
+                            y te seguiré eligiendo siempre.
+                        </p>
+
+                        <p id="p5">
+                            No sé qué nos depare el futuro, pero sé que quiero vivirlo contigo. Quiero seguir 
+                            sumando meses, años, aventuras y momentos a nuestro lado. Quiero ser tu compañero, 
+                            tu confidente, tu refugio y tu alegría.
+                        </p>
+
+                        <div class="letter-divider" id="divider2">
+                            <span>♥ ♥ ♥</span>
+                        </div>
+
+                        <p id="p6">
+                            Te amo, <span class="name-highlight">María Laura</span>. Más de lo que las 
+                            palabras pueden expresar, más de lo que esta carta puede contener. Esto es solo 
+                            el comienzo de nuestra historia, y estoy seguro de que los mejores capítulos 
+                            aún están por escribirse. 💕
+                        </p>
+                    </div>
+                </div>
+
+                <div class="letter-closing" id="letterClosing">
+                    <p>Con todo mi amor, hoy y siempre...</p>
+                    <div class="letter-signature">Tu novio que te ama ❤️</div>
+                </div>
+
+                <div class="letter-ps" id="letterPS">
+                    <p>
+                        P.D.: Esta carta es pequeña comparada con lo grande que es lo que siento por ti. 
+                        Pero es un recordatorio de que cada día te quiero un poquito más que ayer. 🌹
+                    </p>
+                </div>
+
+                <div class="letter-footer">
+                    <div class="footer-hearts">💕 💕 💕</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="moments-section" id="momentsSection">
+            <h2 class="moments-title">✨ Nuestras razones para sonreír ✨</h2>
+            <div class="moments-grid">
+                <div class="moment-card">
+                    <span class="moment-emoji">🥰</span>
+                    <span class="moment-text">Tu sonrisa que me enamora cada día</span>
+                </div>
+                <div class="moment-card">
+                    <span class="moment-emoji">🤗</span>
+                    <span class="moment-text">Tus abrazos que curan todo</span>
+                </div>
+                <div class="moment-card">
+                    <span class="moment-emoji">😂</span>
+                    <span class="moment-text">Nuestras risas interminables</span>
+                </div>
+                <div class="moment-card">
+                    <span class="moment-emoji">🌙</span>
+                    <span class="moment-text">Las buenas noches que me alegran</span>
+                </div>
+                <div class="moment-card">
+                    <span class="moment-emoji">💬</span>
+                    <span class="moment-text">Cada conversación contigo</span>
+                </div>
+                <div class="moment-card">
+                    <span class="moment-emoji">🦋</span>
+                    <span class="moment-text">Las mariposas que siento por ti</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== ESTRELLAS =====
+        function createStars() {
+            const container = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(star);
+            }
+        }
+
+        // ===== CORAZONES FLOTANTES =====
+        function createFloatingHearts() {
+            const container = document.getElementById('floatingHearts');
+            const hearts = ['💕', '💖', '💗', '💓', '❤️', '🩷', '🤍', '✨'];
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.fontSize = (Math.random() * 20 + 14) + 'px';
+                heart.style.setProperty('--float-duration', (Math.random() * 8 + 8) + 's');
+                heart.style.setProperty('--float-delay', (Math.random() * 10) + 's');
+                container.appendChild(heart);
+            }
+        }
+
+        // ===== TOGGLE SOBRE =====
+        let isOpen = false;
+        let animationTimers = [];
+
+        function toggleEnvelope() {
+            const envelope = document.getElementById('envelope');
+            const hint = document.getElementById('openHint');
+            const letterContainer = document.getElementById('letterContainer');
+            const momentsSection = document.getElementById('momentsSection');
+            const badge = document.getElementById('anniversaryBadge');
+
+            if (!isOpen) {
+                // ===== ABRIR =====
+                isOpen = true;
+                envelope.classList.add('opened');
+                hint.textContent = '✨ Toca el sobre para cerrarlo ✨';
+                launchConfetti();
+
+                // Resetear clases de animación antes de animar
+                resetAnimations();
+
+                setTimeout(() => {
+                    letterContainer.classList.add('visible');
+                    badge.classList.add('visible');
+                    animateLetterElements();
+                }, 800);
+
+            } else {
+                // ===== CERRAR =====
+                isOpen = false;
+
+                // Limpiar timers pendientes
+                animationTimers.forEach(t => clearTimeout(t));
+                animationTimers = [];
+
+                // Cerrar carta inmediatamente
+                letterContainer.classList.remove('visible');
+                momentsSection.classList.remove('visible');
+                badge.classList.remove('visible');
+
+                // Cerrar sobre después de un breve momento
+                setTimeout(() => {
+                    envelope.classList.remove('opened');
+                    hint.textContent = '✨ Toca el sobre para abrirlo ✨';
+                    resetAnimations();
+                }, 300);
+            }
+        }
+
+        function resetAnimations() {
+            const animElements = document.querySelectorAll('.anim');
+            animElements.forEach(el => el.classList.remove('anim'));
+        }
+
+        function animateLetterElements() {
+            const sequence = [
+                { id: 'letterDate', delay: 400 },
+                { id: 'letterGreeting', delay: 700 },
+                { id: 'p1', delay: 1000 },
+                { id: 'p2', delay: 1400 },
+                { id: 'p3', delay: 1800 },
+                { id: 'divider1', delay: 2100 },
+                { id: 'p4', delay: 2400 },
+                { id: 'p5', delay: 2800 },
+                { id: 'divider2', delay: 3100 },
+                { id: 'p6', delay: 3400 },
+                { id: 'letterClosing', delay: 3800 },
+                { id: 'letterPS', delay: 4200 },
+                { id: 'momentsSection', delay: 4600 },
+            ];
+
+            sequence.forEach(item => {
+                const timer = setTimeout(() => {
+                    const el = document.getElementById(item.id);
+                    if (el && isOpen) {
+                        el.classList.add('anim');
+                    }
+                }, item.delay);
+                animationTimers.push(timer);
+            });
+        }
+
+        // ===== CONFETTI =====
+        function launchConfetti() {
+            const container = document.getElementById('confettiContainer');
+            const colors = ['#e74c6f', '#c0392b', '#f39c12', '#e8d5b7', '#fff', '#d4a574', '#ff6b9d'];
+            const shapes = ['❤️', '💕', '✨', '🌹', '💖'];
+
+            for (let i = 0; i < 60; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+
+                if (Math.random() > 0.5) {
+                    confetti.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+                    confetti.style.fontSize = (Math.random() * 16 + 10) + 'px';
+                    confetti.style.background = 'none';
+                } else {
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                }
+
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.setProperty('--fall-duration', (Math.random() * 3 + 2) + 's');
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 6000);
+            }
+        }
+
+        // ===== FECHA =====
+        function setDate() {
+            const months = [
+                'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+                'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+            ];
+            const now = new Date();
+            document.getElementById('letterDate').textContent = 
+                `${now.getDate()} de ${months[now.getMonth()]} de ${now.getFullYear()}`;
+        }
+
+        // ===== INIT =====
+        createStars();
+        createFloatingHearts();
+        setDate();
+    </script>
+</body>
+</html>
